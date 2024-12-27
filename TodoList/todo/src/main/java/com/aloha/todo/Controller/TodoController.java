@@ -80,27 +80,39 @@ public class TodoController {
         }
     }
     
-    @PutMapping()
+    @PutMapping
     public ResponseEntity<?> updateTodo(@RequestBody Todos todos) {
+        boolean result = false;
         try {
-            boolean result = todoService.update(todos);
-            if(result)
-                return new ResponseEntity<>("SUCCESS", HttpStatus.CREATED);
-            else
+            if (todos.getId() == null) {
+                result = todoService.completeAll();
+            } else {
+                result = todoService.updateById(todos);
+            }
+            if (result) {
+                return new ResponseEntity<>("SUCCESS", HttpStatus.OK);
+            } else {
                 return new ResponseEntity<>("FAIL", HttpStatus.BAD_REQUEST);
+            }
         } catch (Exception e) {
             return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }
-    
-    @DeleteMapping("/{id}")
-    public ResponseEntity<?> destroyTodo(@PathVariable("id") String id) {
+
+    @DeleteMapping({"","/{id}"})
+    public ResponseEntity<?> destroyTodo(@PathVariable(value = "id", required = false) String id) {
+        boolean result = false;
         try {
-            boolean result = todoService.deleteById(id);
-            if(result)
-                return new ResponseEntity<>("SUCCESS", HttpStatus.CREATED);
-            else
+            if (id == null) {
+                result = todoService.deleteAll();
+            } else {
+                result = todoService.deleteById(id);
+            }
+            if (result) {
+                return new ResponseEntity<>("SUCCESS", HttpStatus.OK);
+            } else {
                 return new ResponseEntity<>("FAIL", HttpStatus.BAD_REQUEST);
+            }
         } catch (Exception e) {
             return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
         }

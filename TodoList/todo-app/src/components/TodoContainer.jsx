@@ -92,12 +92,13 @@ const TodoContainer = () => {
 
     const onSubmit = async (e) => {
         e.preventDefault(); // 기본 이벤트 동작 방지
-        let name = input;
-        if (input === '') name = '제목 없음';
+        console.log('onSubmit called'); // 로그 추가
+
+        const name = input === '' ? '제목없음' : input;
 
         // 데이터 등록 요청
         const data = {
-            name: input,
+            name: name,
             seq: 1
         };
         const option = {
@@ -119,12 +120,62 @@ const TodoContainer = () => {
         setInput(''); // 입력 값 비우기
     };
 
+    // 전체 완료
+    // [PUT] - /todos
+    const onCompleteAll = async () => {
+        // PUT
+        const data = {
+            id: null
+        };
+        const option = {
+            method: 'PUT',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify(data)
+        };
+        const url = `http://localhost:8080/todos`;
+        try {
+            const response = await fetch(url, option);
+            const msg = await response.text();
+            console.log(msg);
+        } catch (error) {
+            console.log(error);
+        }
+        getList();
+    };
+
+    // 전체 삭제
+    // [DELETE] - /todos
+    const onDeleteAll = async () => {
+        // DELETE
+        const data = {
+            id: null
+        };
+        const option = {
+            method: 'DELETE',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify(data)
+        };
+        const url = `http://localhost:8080/todos`;
+        try {
+            const response = await fetch(url, option);
+            const msg = await response.text();
+            console.log(msg);
+        } catch (error) {
+            console.log(error);
+        }
+        getList();
+    };
+
     return (
         <div className="container">
             <TodoHeader />
             <TodoInput input={input} onChange={onChange} onSubmit={onSubmit} />
             <TodoList todoList={todoList} onToggle={onToggle} onRemove={onRemove} />
-            <TodoFooter />
+            <TodoFooter onCompleteAll={onCompleteAll} onDeleteAll={onDeleteAll} />
         </div>
     );
 };

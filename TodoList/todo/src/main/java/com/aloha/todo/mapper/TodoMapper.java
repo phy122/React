@@ -6,5 +6,8 @@ import com.aloha.todo.domain.Todos;
 
 @Mapper
 public interface TodoMapper extends BaseMapper<Todos> {
+
+    public int completeAll();
+    public int deleteAll();
     
 }
