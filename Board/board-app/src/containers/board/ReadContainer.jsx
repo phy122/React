@@ -23,7 +23,6 @@ const ReadContainer = () => {
 
   return (
     <>
-      <div>ReadContainer</div>
       <BoardRead board={board}/>
     </>
   )

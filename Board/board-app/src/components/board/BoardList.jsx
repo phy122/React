@@ -1,6 +1,8 @@
 import React from 'react'
 import { Link } from 'react-router-dom'
 import * as format from '../../utils/format'
+// import './css/BoardList.css'
+import styles from './css/BoardList.module.css'
 
 const BoardList = ({boardList}) => {
   // const boardList = [
@@ -12,10 +14,11 @@ const BoardList = ({boardList}) => {
   // ]
   return (
     <div className='container'>
-      <h1>게시글 목록</h1>
+      <h1 className='title'>게시글 목록</h1>
       <Link to="/boards/insert" className='btn'>글쓰기</Link>
 
-      <table border={1}>
+      {/* <table border={1} className='table'> */}
+      <table border={1} className={`${styles.table}`}>
         <thead>
           <tr>
             <th>번호</th>

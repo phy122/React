@@ -56,7 +56,6 @@ const UpdateContainer = () => {
 
   return (
     <>
-      <div>UpdateContainer</div>
       <BoardUpdateFrom board={board}
                        onUpdate={onUpdate}
                        onDelete={onDelete}/>

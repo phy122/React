@@ -1,11 +1,12 @@
 import React, { useEffect, useState } from 'react'
 import { Link,useParams} from 'react-router-dom'
+import styles from './css/BoardUpdate.module.css'
 
 const BoardUpdateForm = ({board, onUpdate, onDelete}) => {
 
   const {id} = useParams()
 
-  // state
+    // state
     const [title, setTitle] = useState('')
     const [writer, setWriter] = useState('')
     const [content, setContent] = useState('')
@@ -36,29 +37,31 @@ const BoardUpdateForm = ({board, onUpdate, onDelete}) => {
     <div className="container">
       <h1 className='title'>게시글 수정</h1>
       {/* <h3>번호 : {id}</h3> */}
-      <table>
+      <table className={styles.table}>
         <tr>
-          <td>제목</td>
+          <th>제목</th>
           <td>
-            <input type="text" value={title} onChange={changeTitle}/>
+            <input type="text" value={title} onChange={changeTitle} className={styles['form-input']}/>
           </td>
         </tr>
         <tr>
-          <td>작성자</td>
+          <th>작성자</th>
           <td>
-            <input type="text" value={writer} onChange={changeWriter}/>
+            <input type="text" value={writer} onChange={changeWriter} className={styles['form-input']}/>
           </td>
         </tr>
         <tr>
           <td colSpan={2}>
-            <textarea cols={40} rows={10} value={content} onChange={changeContent}></textarea>
+            <textarea cols={40} rows={10} value={content} onChange={changeContent} className={styles['form-input']}></textarea>
           </td>
         </tr>
       </table>
       <div className="btn-box">
         <Link to="/boards" className="btn">목록</Link>
-        <button onClick={onSubmit}>수정</button>
-        <button onClick={handleDelete}>삭제</button>
+        <div>
+          <button onClick={onSubmit} className='btn'>수정</button>
+          <button onClick={handleDelete} className='btn'>삭제</button>
+        </div>
       </div>
     </div>
   )
