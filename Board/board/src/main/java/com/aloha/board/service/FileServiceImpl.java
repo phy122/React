@@ -192,5 +192,47 @@ public class FileServiceImpl implements FileService{
 
         return result;
     }
+
+    @Override
+  public boolean deleteFiles(List<Long> noList) {
+      if( noList == null ) return false;
+      // 1. 파일 삭제
+      for (Long no : noList) {
+          Files file = select(no);
+          delete(file);
+      }
+      // // 2. 파일 데이터 선택 삭제
+      // String nos = "";            // 1,2,3
+      // for (int i = 0; i < noList.size(); i++) {
+      //     nos += noList.get(i).toString();
+      //     if( i != noList.size() - 1 )
+      //         nos += ",";
+      // }
+      // log.info("nos : " + nos);
+      // return fileMapper.deleteFiles(nos) > 0;
+      // 2-1 : MyBatis 의 <foreach> 로 구분자 처리
+      return fileMapper.deleteFileList(noList) > 0;
+  }
+
+  @Override
+  public boolean deleteFilesById(List<String> idList) {
+      if( idList == null ) return false;
+        // 1. 파일 삭제
+        for (String no : idList) {
+            Files file = selectById(no);
+            delete(file);
+        }
+        // // 2. 파일 데이터 삭제
+        // String ids = "";            // 'id1','id2','id3'
+        // for (int i = 0; i < idList.size(); i++) {
+        //   ids += ("'" + idList.get(i) + "'");
+        //     if( i != idList.size() - 1 )
+        //         ids += ",";
+        // }
+        // log.info("nos : " + ids);
+        // return fileMapper.deleteFilesById(ids) > 0;
+        // 2-2 : MyBatis 의 <foreach> 로 구분자 처리
+        return fileMapper.deleteFileListById(idList) > 0;
+  }
     
 }

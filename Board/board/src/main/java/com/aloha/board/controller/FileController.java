@@ -12,7 +12,6 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.util.FileCopyUtils;
-import org.springframework.util.MimeTypeUtils;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -20,6 +19,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.aloha.board.domain.Files;
@@ -104,6 +104,27 @@ public class FileController {
         }
     }
 
+    @DeleteMapping("")
+    public ResponseEntity<?> deletFiles(
+        @RequestParam(value = "noList", required = false) List<Long> noList,
+        @RequestParam(value = "idList", required = false) List<String> idList
+    ){
+        log.info("noList[] : " + noList);
+        log.info("idList[] : " + idList);
+        boolean result = false;
+        if(noList != null){
+            result = fileService.deleteFiles(noList);
+        }
+        if(idList != null){
+            result = fileService.deleteFilesById(idList);
+        }
+        if(result)
+            return new ResponseEntity<>(HttpStatus.OK);
+            
+        return new ResponseEntity<>("FAIL", HttpStatus.BAD_REQUEST);
+    
+    }
+
     /**
      * 파일 다운로드
      * @param id
@@ -120,7 +141,7 @@ public class FileController {
      * @param id
      * @throws IOException 
      */
-    @GetMapping("/img{id}")
+    @GetMapping("/img/{id}")
     public void thumbnailImg(@PathVariable("id") String id, HttpServletResponse response) throws IOException {
         // 파일 정보 조회
         Files files = fileService.selectById(id);

@@ -52,3 +52,19 @@ table{
     width: 100%;
     margin: 10px auto;
 }
+
+.flex-box {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+}
+
+.flex-box .item{
+    align-items: center;
+    display: flex;
+    gap: 20px;
+}
+
+.file-img{
+    width: 140px;
+}

@@ -2,75 +2,105 @@
 <!DOCTYPE mapper
 PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
 "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
 <!-- namespace="매퍼 인터페이스 경로" --> 
 <mapper namespace="com.aloha.board.mapper.BoardMapper">
 
-<select id="list" resultType="Boards">
-    SELECT *
-    FROM boards
-    ORDER BY created_at DESC
-</select>
-    <!-- 정렬 후 페이징 하면, 완료 안 된 것만 앞으로, 완료 된 것만 뒤로 나옴 -->
-    <!-- 페이징 후 정렬을 적용 -->
-    <!-- ORDER BY status asc, seq asc -->
-<select id="select" resultType="Boards">
-    SELECT *
-    FROM boards
-    WHERE no = #{no}
-</select>
+    <resultMap type="Boards" id="boardMap">
+        <id property="no" column="no" />
+        <result property="no" column="no" />
+        <result property="id" column="id" />
+        <result property="title" column="title" />
+        <result property="writer" column="writer" />
+        <result property="content" column="content" />
+        <result property="createdAt" column="created_at" />
+        <result property="updatedAt" column="updated_at" />
 
-<select id="selectById" resultType="Boards">
-    SELECT *
-    FROM boards
-    WHERE id = #{id}
-</select>
-<!-- 자동 증가된 boards 의 no 를 Boards 객체의 no 변수에 넣어준다. -->
-<insert id="insert" parameterType="Boards" useGeneratedKeys="true" keyProperty="no">
-    INSERT INTO boards ( id, title, writer, content )
-    VALUES (#{id}, #{title}, #{writer},#{content})
-</insert>
+        <association property="file" column="no" javaType="Files" select="selectMainFile"></association>
 
-<update id="update">
-    UPDATE boards
-    <set>
-        <if test="title != null">
-            title = #{title},
-        </if>
-        <if test="writer != null">
-            writer = #{writer},
-        </if>
-        <if test="content != null">
-            content = #{content},
-        </if>
-            updated_at = now()
-    </set>
-    WHERE no = #{no}
-</update>
-<update id="updateById">
-    UPDATE boards
-    <set>
-        <if test="title != null">
-            title = #{title},
-        </if>
-        <if test="writer != null">
-            writer = #{writer},
-        </if>
-        <if test="content != null">
-            content = #{content},
-        </if>
-            updated_at = now()    
-    </set>
-    WHERE id = #{id}
-</update>
+    </resultMap>
 
-<delete id="delete">
-    DELETE FROM boards
-    WHERE no = #{no}
-</delete>
 
-<delete id="deleteById">
-    DELETE FROM boards
-    WHERE id = #{id}
-</delete>
+    <select id="list" resultMap="boardMap">
+        SELECT *
+        FROM boards
+        ORDER BY created_at DESC
+    </select>
+
+    <!-- <select id="list" resultType="Boards">
+        SELECT *
+        FROM boards
+        ORDER BY created_at DESC
+    </select> -->
+    
+    <select id="select" resultType="Boards">
+        SELECT *
+        FROM boards
+        WHERE no = #{no}
+    </select>
+
+    <select id="selectById" resultType="Boards">
+        SELECT *
+        FROM boards
+        WHERE id = #{id}
+    </select>
+    <!-- ✨자동 증가된 boards 의 no 를 Boards 객체의 no 변수에 넣어준다. -->
+    <insert id="insert" parameterType="Boards" useGeneratedKeys="true" keyProperty="no">
+        INSERT INTO boards ( id, title, writer, content )
+        VALUES ( #{id}, #{title}, #{writer}, #{content} )
+    </insert>
+
+    <update id="update">
+        UPDATE boards
+         <set>
+            <if test="title != null">
+                title = #{title},
+            </if>   
+            <if test="writer != null">
+                writer = #{writer},
+            </if>   
+            <if test="content != null">
+                content = #{content},
+            </if>  
+                updated_at = now()
+         </set>
+        WHERE no = #{no}
+    </update>
+
+    <update id="updateById">
+        UPDATE boards
+         <set>
+            <if test="title != null">
+                title = #{title},
+            </if>   
+            <if test="writer != null">
+                writer = #{writer},
+            </if>   
+            <if test="content != null">
+                content = #{content},
+            </if>  
+                updated_at = now()
+         </set>
+        WHERE id = #{id}
+    </update>
+
+    <delete id="delete">
+        DELETE FROM boards
+        WHERE no = #{no}
+    </delete>
+
+    <delete id="deleteById">
+        DELETE FROM boards
+        WHERE id = #{id}
+    </delete>
+
+    <!-- 메인 파일 정보 조회 -->
+    <select id="selectMainFile" resultType="Files">
+        SELECT *
+        FROM Files
+        WHERE p_no = #{no}
+          AND p_table = 'boards'
+          AND type = 'MAIN'
+    </select>
 
 </mapper>

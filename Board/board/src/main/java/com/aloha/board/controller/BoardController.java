@@ -34,11 +34,10 @@ import lombok.extern.slf4j.Slf4j;
 @RequestMapping("/boards")
 public class BoardController {
 
-    @Autowired
-    private BoardService boardService;
+    @Autowired BoardService boardService;
+    @Autowired FileService fileService;
 
-    @Autowired
-    private FileService fileService;
+    // ⭐ sp-crud
     
     @GetMapping()
     public ResponseEntity<?> getAllBoard(
@@ -46,31 +45,37 @@ public class BoardController {
         @RequestParam(value = "size", required = false, defaultValue = "10") int size
     ) {
         try {
-            PageInfo<Boards> pageInfo = boardService.list(page,size);
+            // List<Boards> boardList = boardService.list();
+            // return new ResponseEntity<>(boardList, HttpStatus.OK);
+
+            PageInfo<Boards> pageInfo = boardService.list(page, size);
             Pagination pagination = new Pagination();
             pagination.setPage(page);
-            pagination.setPage(size);
+            pagination.setSize(size);
             pagination.setTotal(pageInfo.getTotal());
             Map<String, Object> response = new HashMap<String, Object>();
             response.put("list", pageInfo.getList());
             response.put("pagination", pagination);
-            return new ResponseEntity<>(pageInfo, HttpStatus.OK);
+
+            return new ResponseEntity<>(response, HttpStatus.OK);
         } catch (Exception e) {
             return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }
     
     @GetMapping("/{id}")
-    public ResponseEntity<?> getOneBoard(@PathVariable("id") String id) {
+    public ResponseEntity<?> getOneBoard(
+        @PathVariable("id") String id
+    ) {
         try {
-            Boards boards = boardService.selectById(id);
+            Boards board = boardService.selectById(id);
             // 파일 목록 조회
-            Files files = new Files();
-            files.setPTable("boards");
-            files.setPNo(boards.getNo());
-            List<Files> fileList = fileService.listByParent(files);
+            Files file = new Files();
+            file.setPTable("boards");
+            file.setPNo(board.getNo());
+            List<Files> fileList = fileService.listByParent(file);
             Map<String, Object> response = new HashMap<>();
-            response.put("board", boards);
+            response.put("board", board);
             response.put("fileList", fileList);
             return new ResponseEntity<>(response, HttpStatus.OK);
         } catch (Exception e) {
@@ -78,19 +83,22 @@ public class BoardController {
         }
     }
     
-    /**
-     * - @RequestBody 붙일 때 안 붙일 때 차이
-     * - @RequestBody O : application/json, application/xml
-     * - @RequestBody X : multipart/form-data, application/x-www-form-urlencoded
-     */
+    /* 
+     * @RequestBody 붙일 때 안 붙일 때 차이
+     * - @RequestBody ⭕ : application/json, application/xml
+     * - @RequestBody ❌ : multipart/form-data, applcation/x-www-form-urlencoded
+     * 
+    */
     @PostMapping(value = "", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
-    public ResponseEntity<?> createBoardFormData( Boards boards) {
+    public ResponseEntity<?> createBoardFormData(Boards board) {
         log.info("게시글 등록 - multipart/form-data");
+        log.info("########### board ");
+        log.info(": "+ board);
         try {
-            boolean result = boardService.insert(boards);
-            if(result){
+            boolean result = boardService.insert(board);
+            if( result ) {
                 return new ResponseEntity<>("SUCCESS", HttpStatus.CREATED);
-            } else{
+            } else {
                 return new ResponseEntity<>("FAIL", HttpStatus.BAD_REQUEST);
             }
         } catch (Exception e) {
@@ -99,13 +107,13 @@ public class BoardController {
     }
 
     @PostMapping(value = "", consumes = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<?> createBoardJSON(@RequestBody Boards boards) {
+    public ResponseEntity<?> createBoardJSON(@RequestBody Boards board) {
         log.info("게시글 등록 - application/json");
         try {
-            boolean result = boardService.insert(boards);
-            if(result){
+            boolean result = boardService.insert(board);
+            if( result ) {
                 return new ResponseEntity<>("SUCCESS", HttpStatus.CREATED);
-            } else{
+            } else {
                 return new ResponseEntity<>("FAIL", HttpStatus.BAD_REQUEST);
             }
         } catch (Exception e) {
@@ -114,12 +122,12 @@ public class BoardController {
     }
     
     @PutMapping()
-    public ResponseEntity<?> updateBoard(@RequestBody Boards boards) {
+    public ResponseEntity<?> updateBoard(@RequestBody Boards board) {
         try {
-            boolean result = boardService.updateById(boards);
-            if(result){
+            boolean result = boardService.updateById(board);
+            if( result ) {
                 return new ResponseEntity<>("SUCCESS", HttpStatus.OK);
-            } else{
+            } else {
                 return new ResponseEntity<>("FAIL", HttpStatus.BAD_REQUEST);
             }
         } catch (Exception e) {
@@ -131,9 +139,9 @@ public class BoardController {
     public ResponseEntity<?> destroyBoard(@PathVariable("id") String id) {
         try {
             boolean result = boardService.deleteById(id);
-            if(result){
+            if( result ) {
                 return new ResponseEntity<>("SUCCESS", HttpStatus.OK);
-            } else{
+            } else {
                 return new ResponseEntity<>("FAIL", HttpStatus.BAD_REQUEST);
             }
         } catch (Exception e) {
