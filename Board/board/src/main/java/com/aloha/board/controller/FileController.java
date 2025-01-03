@@ -104,6 +104,9 @@ public class FileController {
         }
     }
 
+    /***
+     * 파일 선택 삭제
+     */
     @DeleteMapping("")
     public ResponseEntity<?> deletFiles(
         @RequestParam(value = "noList", required = false) List<Long> noList,
