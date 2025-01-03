@@ -26,5 +26,11 @@ public interface FileMapper extends BaseMapper<Files>{
     public int deleteFileList(@Param("noList") List<Long> noList);
     
     // 선택 삭제 - id
-    public int deleteFileListById(@Param("noList") List<String> idList);
+    public int deleteFileListById(@Param("idList") List<String> idList);
+
+    // 타입별 파일 조회
+    public Files selectByType(Files files);
+
+    // 타입별 파일 목록
+    public List<Files> listByType(Files files);
 }

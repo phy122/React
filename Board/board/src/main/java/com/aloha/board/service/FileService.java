@@ -25,4 +25,10 @@ public interface FileService extends BaseService<Files>{
     public boolean deleteFiles(List<Long> noList);
     // 선택 삭제 - id
     public boolean deleteFilesById(List<String> idList);
+
+     // 타입별 파일 조회
+     public Files selectByType(Files files);
+
+     // 타입별 파일 목록
+     public List<Files> listByType(Files files);
 }

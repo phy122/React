@@ -2,18 +2,16 @@
 <!DOCTYPE mapper
 PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
 "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
 <!-- namespace="매퍼 인터페이스 경로" --> 
 <mapper namespace="com.aloha.board.mapper.FileMapper">
 
     <select id="list" resultType="Files">
-    SELECT *
-    FROM files
-    ORDER BY created_at DESC
+        SELECT *
+        FROM files
+        ORDER BY created_at DESC
     </select>
-
-        <!-- 정렬 후 페이징 하면, 완료 안 된 것만 앞으로, 완료 된 것만 뒤로 나옴 -->
-        <!-- 페이징 후 정렬을 적용 -->
-        <!-- ORDER BY status asc, seq asc -->
+    
     <select id="select" resultType="Files">
         SELECT *
         FROM files
@@ -27,74 +25,79 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
     </select>
 
     <insert id="insert">
-        INSERT INTO files ( id, p_table, p_no, type, file_name, origin_name, file_path, file_size, seq )
-        VALUES (
-                #{id}, #{pTable}, #{pNo},#{type},
-                #{fileName},#{originName},#{filePath},#{fileSize},#{seq} 
-                )
+        INSERT INTO files 
+            ( 
+                id, p_table, p_no, type, 
+                file_name, origin_name, file_path, file_size, seq 
+            )
+        VALUES 
+            ( 
+                #{id}, #{pTable}, #{pNo}, #{type}, 
+                #{fileName}, #{originName}, #{filePath}, #{fileSize}, #{seq}  
+            )
     </insert>
 
     <update id="update">
         UPDATE files
-        <set>
+         <set>
             <if test="type != null">
                 type = #{type},
-            </if>
+            </if>   
             <if test="pTable != null">
                 p_table = #{pTable},
-            </if>
+            </if>   
             <if test="pNo != null">
                 p_no = #{pNo},
-            </if>
+            </if>  
             <if test="fileName != null">
                 file_name = #{fileName},
-            </if>
+            </if>  
             <if test="originName != null">
                 origin_name = #{originName},
-            </if>
+            </if>  
             <if test="filePath != null">
                 file_path = #{filePath},
-            </if>
+            </if>  
             <if test="fileSize != null">
                 file_size = #{fileSize},
-            </if>
+            </if>  
             <if test="seq != null">
                 seq = #{seq},
-            </if>
+            </if>  
                 updated_at = now()
-        </set>
+         </set>
         WHERE no = #{no}
     </update>
 
     <update id="updateById">
         UPDATE files
-        <set>
+         <set>
             <if test="type != null">
                 type = #{type},
-            </if>
+            </if>   
             <if test="pTable != null">
                 p_table = #{pTable},
-            </if>
+            </if>   
             <if test="pNo != null">
                 p_no = #{pNo},
-            </if>
+            </if>  
             <if test="fileName != null">
                 file_name = #{fileName},
-            </if>
+            </if>  
             <if test="originName != null">
                 origin_name = #{originName},
-            </if>
+            </if>  
             <if test="filePath != null">
                 file_path = #{filePath},
-            </if>
+            </if>  
             <if test="fileSize != null">
                 file_size = #{fileSize},
-            </if>
+            </if>  
             <if test="seq != null">
                 seq = #{seq},
-            </if>
+            </if>  
                 updated_at = now()
-        </set>
+         </set>
         WHERE id = #{id}
     </update>
 
@@ -112,45 +115,75 @@ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
     <select id="listByParent" resultType="Files">
         SELECT *
         FROM files
-        WHERE p_table = #{pTable}
-          AND p_no = #{pNo}
+        WHERE 
+                p_table = #{pTable}
+            AND p_no = #{pNo}
         ORDER BY seq ASC
     </select>
 
     <!-- 부모 테이블 기준 삭제 -->
     <delete id="deleteByParent">
-        DELETE 
-        FROM files
-        WHERE p_table = #{pTable}
-          AND p_no = #{pNo}
+        DELETE FROM files
+        WHERE 
+                p_table = #{pTable}
+            AND p_no = #{pNo}
     </delete>
 
+    <!-- ✨ #{} vs ${} -->
+    <!-- #{변수명}  ➡  '값' -->
+    <!-- ${변수명}  ➡   값 -->
+
     <!-- 선택 삭제 - no -->
+    <!-- no IN (1,2,3) -->
     <delete id="deleteFiles">
         DELETE FROM files
-        WHERE no IN ( ${no} )
+        WHERE no IN ( ${no} )  
     </delete>
 
     <!-- 선택 삭제 - id -->
+    <!-- id IN ('ID1', 'ID2', 'ID3') -->
     <delete id="deleteFilesById">
         DELETE FROM files
-        WHERE no IN ( ${id} )
+        WHERE id IN ( ${id} )
     </delete>
 
+
+    <!-- 선택 삭제 - no -->
+    <!-- no IN (1,2,3) -->
     <delete id="deleteFileList">
         DELETE FROM files
-        WHERE no IN
+        WHERE no IN 
         <foreach collection="noList" item="no" open="(" separator="," close=")">
             #{no}
         </foreach>
     </delete>
+
     <!-- 선택 삭제 - id -->
     <!-- id IN ('ID1', 'ID2', 'ID3') -->
     <delete id="deleteFileListById">
         DELETE FROM files
-        WHERE id IN
+        WHERE id IN 
         <foreach collection="idList" item="id" open="(" separator="," close=")">
             #{id}
         </foreach>
     </delete>
+
+    <!-- 타입별 타입 파일 조회 -->
+    <select id="selectByType" resultType="Files">
+        SELECT *
+        FROM files
+        WHERE p_table = #{pTable}
+          AND p_no = #{pNo}
+          AND type = #{type}
+    </select>
+
+    <!-- 타입별 타입 파일 목록  -->
+    <select id="listByType" resultType="Files">
+        SELECT *
+        FROM files
+        WHERE p_table = #{pTable}
+          AND p_no = #{pNo}
+          AND type = #{type}
+    </select>
+
 </mapper>

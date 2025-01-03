@@ -183,6 +183,39 @@ public class FileController {
         }
     }
 
+    @GetMapping("/{pTable}/{pNo}")
+    public ResponseEntity<?> getAllFile(
+        @PathVariable("pTable") String pTable, 
+        @PathVariable("pNo") Long pNo, 
+        @RequestParam(value = "type", required = false) String type
+        ) {
+        try {
+            Files files = new Files();
+            files.setPTable(pTable);
+            files.setPNo(pNo);
+            files.setType(type);
+            // type 없을 때 -> 부모 기준 모든 파일 
+            log.info( "넘겨받은 파일 정보 : " + files.toString());
+            if(type == null){
+                List<Files> list = fileService.listByParent(files);
+                return new ResponseEntity<>(list, HttpStatus.OK);
+            }
+            // type : "MAIN" -> 메인파일 1개  
+            if(type.equals("MAIN")){
+                Files mainFile = fileService.selectByType(files);
+                log.info("메인 파일 : " + mainFile);
+                return new ResponseEntity<>(mainFile, HttpStatus.OK);
+            }
+            // type : "?" -> 타입 별 여러 파일 
+            else{
+                List<Files> list = fileService.listByType(files);
+                return new ResponseEntity<>(list, HttpStatus.OK);
+            }
+        } catch (Exception e) {
+            return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+    }
+
     
     
     

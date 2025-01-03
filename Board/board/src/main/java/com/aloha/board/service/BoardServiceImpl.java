@@ -44,7 +44,21 @@ public class BoardServiceImpl implements BoardService{
     @Override
     @Transactional
     public boolean insert(Boards entity) {
+        // 게시글 등록
         int result = boardMapper.insert(entity);
+
+        // 파일 업로드
+        result += upload(entity);
+        return result > 0;
+    }
+
+    /**
+     * 파일 업로드
+     * @param entity
+     * @return
+     */
+    public int upload(Boards entity){
+        int result = 0;
         String pTable = "boards";
         Long pNo = entity.getNo();  
 
@@ -79,17 +93,29 @@ public class BoardServiceImpl implements BoardService{
             log.error("게시글 파일 업로드 중 에러 발생");
             e.printStackTrace();
         }
-        return result > 0;
+
+        return result;
     }
 
     @Override
     public boolean update(Boards entity) {
-        return boardMapper.update(entity) > 0;
+        // 게시글 수정
+        int result = boardMapper.update(entity);
+
+        // 파일 업로드
+        result += upload(entity);
+        return result > 0;
     }
 
     @Override
     public boolean updateById(Boards entity) {
-        return boardMapper.updateById(entity) > 0;
+        Boards oldBoard = boardMapper.selectById(entity.getId());
+        entity.setNo(oldBoard.getNo());
+        // 게시글 수정
+        int result = boardMapper.updateById(entity);
+        // 파일 업로드
+        result += upload(entity);
+        return result > 0;
     }
 
     @Override
