@@ -90,3 +90,26 @@ table{
     height: 300px;
 
 }
+
+.pagination{
+    margin: 50px auto;
+    display: flex;
+    justify-content: center;
+    column-gap: 10px;
+}
+
+.btn-page {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding: 6px 8px;
+    background-color: aliceblue;
+    border-radius: 8px;
+    color: #666;
+}
+.btn-page.active,
+.btn-page:hover{
+    text-decoration: none !important;
+    background-color: cyan;
+    color: black;
+}
