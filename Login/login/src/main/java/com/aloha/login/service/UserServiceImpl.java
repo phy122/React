@@ -1,6 +1,5 @@
 package com.aloha.login.service;
 
-import org.apache.catalina.User;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -13,8 +12,8 @@ import com.aloha.login.mapper.UserMapper;
 import jakarta.servlet.http.HttpServletRequest;
 
 @Service
-public class UserServiceImpl implements UserService{
-
+public class UserServiceImpl implements UserService {
+    
     @Autowired
     private UserMapper userMapper;
 
@@ -35,7 +34,7 @@ public class UserServiceImpl implements UserService{
         int result = userMapper.join(user);
 
         // 권한 등록
-        if(result > 0){
+        if( result > 0 ) {
             UserAuth userAuth = UserAuth.builder()
                                         .username(user.getUsername())
                                         .auth("ROLE_USER")
@@ -52,6 +51,8 @@ public class UserServiceImpl implements UserService{
 
     @Override
     public void login(Users user, HttpServletRequest request) {
+        // TODO Auto-generated method stub
+        throw new UnsupportedOperationException("Unimplemented method 'login'");
     }
 
     @Override
@@ -59,5 +60,12 @@ public class UserServiceImpl implements UserService{
         int result = userMapper.update(user);
         return result > 0;
     }
+
+    @Override
+    public boolean delete(String username) throws Exception {
+        return userMapper.delete(username) > 0;
+    }
+
+
     
 }

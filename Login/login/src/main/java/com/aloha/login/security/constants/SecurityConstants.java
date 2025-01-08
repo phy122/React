@@ -20,7 +20,6 @@ public final class SecurityConstants {
     
     // 이 클래스를 final로 선언하여 상속을 방지하고, 상수만을 정의하도록 만듭니다.
 
-    // 로그인 경로
+    // 🔗 로그인 경로
     public static final String LOGIN_URL = "/login";
-
 }

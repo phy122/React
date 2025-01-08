@@ -5,6 +5,7 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.config.annotation.authentication.configuration.AuthenticationConfiguration;
+import org.springframework.security.config.annotation.method.configuration.EnableGlobalMethodSecurity;
 import org.springframework.security.config.annotation.method.configuration.EnableMethodSecurity;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
@@ -21,23 +22,22 @@ import com.aloha.login.service.UserDetailServiceImpl;
 
 @Configuration
 @EnableWebSecurity
-@EnableMethodSecurity(prePostEnabled = true , securedEnabled = true)
+@EnableMethodSecurity( prePostEnabled = true, securedEnabled = true )
 public class SecurityConfig {
 
-	@Autowired
-	private UserDetailServiceImpl userdetailServiceImpl;
+	@Autowired private UserDetailServiceImpl userDetailServiceImpl;
 
-	@Autowired
-	private JwtProvider jwtProvider;
+	@Autowired private JwtProvider jwtProvider;
 
 	private AuthenticationManager authenticationManager;
 
 	@Bean
-	public AuthenticationManager authenticationManager(AuthenticationConfiguration authenticationConfiguration) throws Exception{
+	public AuthenticationManager authenticationManager(AuthenticationConfiguration authenticationConfiguration) throws Exception {
 		this.authenticationManager = authenticationConfiguration.getAuthenticationManager();
 		return authenticationManager;
 	}
 
+	
 	// OK : (version : after SpringSecurity 5.4 ⬆)
 	@Bean
 	public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
@@ -55,14 +55,16 @@ public class SecurityConfig {
 		http.sessionManagement(management ->management
 			.sessionCreationPolicy(SessionCreationPolicy.STATELESS));
 
-		// 사용자 정의 인증 설정
-		http.userDetailsService(userdetailServiceImpl);
+		// ✅ 사용자 정의 인증 설정
+		http.userDetailsService( userDetailServiceImpl );
 
 		// 필터 설정
-		//JWT 요청 필터 설정
-		// JWT 인증 필터 설정
-		http.addFilterAt(new JwtAuthenticationFilter(authenticationManager, jwtProvider), UsernamePasswordAuthenticationFilter.class)
-		.addFilterBefore(new JwtRequestFilter(authenticationManager, jwtProvider), UsernamePasswordAuthenticationFilter.class);
+		// ✅ JWT 요청 필터 설정 1️⃣
+		// ✅ JWT 인증 필터 설정 2️⃣
+		http.addFilterAt( new JwtAuthenticationFilter(authenticationManager, jwtProvider)
+						 , UsernamePasswordAuthenticationFilter.class )
+			.addFilterBefore(new JwtRequestFilter(authenticationManager, jwtProvider)
+						, UsernamePasswordAuthenticationFilter.class);
 
 
 		// 구성이 완료된 SecurityFilterChain을 반환합니다.
@@ -71,7 +73,7 @@ public class SecurityConfig {
 
 	// 비밀번호 암호화 빈 등록
 	@Bean
-	public PasswordEncoder passwordEncoder(){
+	public PasswordEncoder passwordEncoder() {
 		return new BCryptPasswordEncoder();
 	}
 }
